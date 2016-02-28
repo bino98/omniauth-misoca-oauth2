@@ -20,5 +20,5 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = "omniauth-misoca-oauth2"
   gem.require_paths = %w(lib)
-  gem.version       = Misoca::VERSION
+  gem.version       = OmniAuth::Misoca::Oauth2::VERSION
 end
