@@ -1,5 +1,5 @@
 module OmniAuth
-  module MisocaOauth2
+  module Misoca
     VERSION = "1.0.0"
   end
 end

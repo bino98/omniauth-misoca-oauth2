@@ -6,7 +6,7 @@ require "timeout"      # for Timeout::Error
 
 module OmniAuth
   module Strategies
-    class MisocaOauth2 < OmniAuth::Strategies::Oauth2
+    class Misoca < OmniAuth::Strategies::Oauth2
       include OmniAuth::Strategy
 
       def self.inherited(subclass)
