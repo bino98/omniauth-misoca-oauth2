@@ -6,12 +6,7 @@ require "timeout"      # for Timeout::Error
 
 module OmniAuth
   module Strategies
-    # Authentication strategy for connecting with APIs constructed using
-    # the [OAuth 2.0 Specification](http://tools.ietf.org/html/draft-ietf-oauth-v2-10).
-    # You must generally register your application with the provider and
-    # utilize an application id and secret in order to authenticate using
-    # OAuth 2.0.
-    class OAuth2
+    class MisocaOauth2 < OmniAuth::Strategies::Oauth2
       include OmniAuth::Strategy
 
       def self.inherited(subclass)
@@ -20,9 +15,14 @@ module OmniAuth
 
       args [:client_id, :client_secret]
 
+      option :name, 'misoca-oauth2'
       option :client_id, nil
       option :client_secret, nil
-      option :client_options, {}
+      option :client_options, {
+        site: 'https://app.misoca.jp',
+        authorize_url: '/oauth2/authorize',
+        token_url: '/oauth2/token',
+      }
       option :authorize_params, {}
       option :authorize_options, [:scope]
       option :token_params, {}
@@ -30,9 +30,14 @@ module OmniAuth
       option :auth_token_params, {}
       option :provider_ignores_state, false
 
+      option :dev_mode, false
+
       attr_accessor :access_token
 
       def client
+        if options.dev_mode
+          options.client_options.site = 'https://dev.misoca.jp'
+        end
         ::OAuth2::Client.new(options.client_id, options.client_secret, deep_symbolize(options.client_options))
       end
 
@@ -124,4 +129,4 @@ module OmniAuth
   end
 end
 
-OmniAuth.config.add_camelization "oauth2", "OAuth2"
+OmniAuth.config.add_camelization "misoca-oauth2", "Misoca-Oauth2"
