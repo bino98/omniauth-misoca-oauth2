@@ -15,7 +15,7 @@ module OmniAuth
 
       args [:client_id, :client_secret]
 
-      option :name, 'misoca-oauth2'
+      option :name, 'misoca_oauth2'
       option :client_id, nil
       option :client_secret, nil
       option :client_options, {
@@ -129,4 +129,4 @@ module OmniAuth
   end
 end
 
-OmniAuth.config.add_camelization "misoca-oauth2", "Misoca-Oauth2"
+OmniAuth.config.add_camelization "misoca_oauth2", "Misoca_Oauth2"
