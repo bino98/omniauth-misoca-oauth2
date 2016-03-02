@@ -1,7 +1,7 @@
 module OmniAuth
   module Misoca
-      module Oauth2
-        VERSION = "1.0.0"
-      end
+    module Oauth2
+      VERSION = '1.0.0'.freeze
+    end
   end
 end
