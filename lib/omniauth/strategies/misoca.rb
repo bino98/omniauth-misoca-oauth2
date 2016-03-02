@@ -28,11 +28,7 @@ module OmniAuth
 
       uid { raw_info['user_id'] }
 
-      info do
-        prune!({
-          email: row_info['email']
-        })
-      end
+      info { email: row_info['email'] }
 
       def raw_info
         info_me_url = 'https://app.misoca.jp/api/v1/me'
