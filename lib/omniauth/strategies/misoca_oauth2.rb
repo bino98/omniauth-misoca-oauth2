@@ -6,8 +6,11 @@ require 'timeout'      # for Timeout::Error
 
 module OmniAuth
   module Strategies
-    class Misoca < OmniAuth::Strategies::OAuth2
+    class MisocaOauth2 < OmniAuth::Strategies::OAuth2
       include OmniAuth::Strategy
+
+      DEVELOPMENT_API_URL = 'https://dev.misoca.jp'
+      PRODUCTION_API_URL  = 'https://app.misoca.jp'
 
       def self.inherited(subclass)
         OmniAuth::Strategy.included(subclass)
@@ -15,28 +18,40 @@ module OmniAuth
 
       option :name, 'misoca_oauth2'
       option :client_options, {
-        :site => 'https://app.misoca.jp',
+        :site => PRODUCTION_API_URL,
         :authorize_url => '/oauth2/authorize',
         :token_url => '/oauth2/token'
       }
       option :dev_mode, false
 
       def client
-        options.client_options.site = 'https://dev.misoca.jp' if options.dev_mode
+        options.client_options.site = DEVELOPMENT_API_URL if options.dev_mode
         ::OAuth2::Client.new(options.client_id, options.client_secret, deep_symbolize(options.client_options))
       end
 
       uid { raw_info['user_id'] }
 
-      info { email: row_info['email'] }
+      info do
+        prune!({
+          email: row_info['email']
+        })
+      end
 
       def raw_info
-        info_me_url = 'https://app.misoca.jp/api/v1/me'
-        info_me_url = 'https://dev.misoca.jp/api/v1/me' if options.dev_mode
+        info_me_url = PRODUCTION_API_URL  + '/api/v1/me'
+        info_me_url = DEVELOPMENT_API_URL + '/api/v1/me' if options.dev_mode
         @raw_info ||= access_token.get(info_me_url).parsed
+      end
+
+      protected
+      def prune!(hash)
+        hash.delete_if do |_, v|
+          prune!(v) if v.is_a?(Hash)
+          v.nil? || (v.respond_to?(:empty?) && v.empty?)
+        end
       end
     end
   end
 end
 
-OmniAuth.config.add_camelization 'misoca_oauth2', 'Misoca_Oauth2'
+OmniAuth.config.add_camelization 'misoca_oauth2', 'MisocaOauth2'
