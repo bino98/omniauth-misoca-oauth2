@@ -1,6 +1,6 @@
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "misoca/version"
+require "misoca_oauth2/version"
 
 Gem::Specification.new do |gem|
   gem.add_dependency "omniauth-oauth2", "~> 1.0"
