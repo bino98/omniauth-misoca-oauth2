@@ -24,7 +24,6 @@ module OmniAuth
         :authorize_url => '/oauth2/authorize',
         :token_url => '/oauth2/token'
       }
-      option :authorize_options, [:scope]
 
       option :dev_mode, false
 
@@ -42,12 +41,19 @@ module OmniAuth
       end
 
       def authorize_params
-        super.tap do |params|
-          options[:authorize_options].each do |k|
-            params[k] = request.params[k.to_s] unless [nil, ''].include?(request.params[k.to_s])
-          end
-          raw_scope = params[:scope] || DEFAULT_SCOPE
+        options.authorize_params[:scope] = options.authorize_params[:state] || DEFAULT_SCOPE
+        options.authorize_params[:state] = SecureRandom.hex(24)
+        params = options.authorize_params.merge(options_for("authorize"))
+        if OmniAuth.config.test_mode
+          @env ||= {}
+          @env["rack.session"] ||= {}
         end
+        session["omniauth.state"] = params[:state]
+        params
+      end
+
+      def callback_url
+        full_host + script_name + callback_path
       end
 
       def raw_info
@@ -71,20 +77,6 @@ module OmniAuth
           hash[key.to_sym] = value.is_a?(Hash) ? deep_symbolize(value) : value
         end
         hash
-      end
-
-      class CallbackError < StandardError
-        attr_accessor :error, :error_reason, :error_uri
-
-        def initialize(error, error_reason = nil, error_uri = nil)
-          self.error = error
-          self.error_reason = error_reason
-          self.error_uri = error_uri
-        end
-
-        def message
-          [error, error_reason, error_uri].compact.join(" | ")
-        end
       end
     end
   end
