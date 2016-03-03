@@ -36,7 +36,7 @@ module OmniAuth
 
       info do
         prune!({
-          email: row_info['email']
+          email: raw_info['email']
         })
       end
 
