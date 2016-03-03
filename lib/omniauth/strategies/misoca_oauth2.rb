@@ -53,6 +53,10 @@ module OmniAuth
         params
       end
 
+      def callback_url
+        full_host + script_name + callback_path
+      end
+
       def raw_info
         info_endpoint = '/api/v1/me'
         info_me_url = PRODUCTION_API_URL  + info_endpoint
