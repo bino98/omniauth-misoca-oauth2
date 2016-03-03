@@ -42,6 +42,7 @@ module OmniAuth
 
       def authorize_params
         options.authorize_params[:scope] = options.authorize_params[:state] || DEFAULT_SCOPE
+        super::authorize_params
         options.authorize_params[:state] = SecureRandom.hex(24)
         params = options.authorize_params.merge(options_for("authorize"))
         if OmniAuth.config.test_mode
@@ -50,10 +51,6 @@ module OmniAuth
         end
         session["omniauth.state"] = params[:state]
         params
-      end
-
-      def callback_url
-        full_host + script_name + callback_path
       end
 
       def raw_info
