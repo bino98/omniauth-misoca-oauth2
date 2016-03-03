@@ -21,6 +21,7 @@ provider :misoca_oauth2, <クライアントID>, <シークレットキー>, dev
 
 #### scope
 - readまたはwrite
+- 記述しないとreadになります
 
 ### アクセキー取得
 - callbackで、``request.env["omniauth.auth"]``にアクセストークンが含まれます。
