@@ -12,6 +12,8 @@ module OmniAuth
       DEVELOPMENT_API_URL = 'https://dev.misoca.jp'
       PRODUCTION_API_URL  = 'https://app.misoca.jp'
 
+      DEFAULT_SCOPE       = 'read'
+
       def self.inherited(subclass)
         OmniAuth::Strategy.included(subclass)
       end
@@ -22,6 +24,8 @@ module OmniAuth
         :authorize_url => '/oauth2/authorize',
         :token_url => '/oauth2/token'
       }
+      option :authorize_options, [:scope]
+
       option :dev_mode, false
 
       def client
@@ -37,9 +41,19 @@ module OmniAuth
         })
       end
 
+      def authorize_params
+        super.tap do |params|
+          options[:authorize_options].each do |k|
+            params[k] = request.params[k.to_s] unless [nil, ''].include?(request.params[k.to_s])
+          end
+          raw_scope = params[:scope] || DEFAULT_SCOPE
+        end
+      end
+
       def raw_info
-        info_me_url = PRODUCTION_API_URL  + '/api/v1/me'
-        info_me_url = DEVELOPMENT_API_URL + '/api/v1/me' if options.dev_mode
+        info_endpoint = '/api/v1/me'
+        info_me_url = PRODUCTION_API_URL  + info_endpoint
+        info_me_url = DEVELOPMENT_API_URL + info_endpoint if options.dev_mode
         @raw_info ||= access_token.get(info_me_url).parsed
       end
 
