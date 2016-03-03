@@ -64,6 +64,14 @@ module OmniAuth
           v.nil? || (v.respond_to?(:empty?) && v.empty?)
         end
       end
+
+      def deep_symbolize(options)
+        hash = {}
+        options.each do |key, value|
+          hash[key.to_sym] = value.is_a?(Hash) ? deep_symbolize(value) : value
+        end
+        hash
+      end
     end
   end
 end
